@@ -6,9 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/timam/dwt-deployments.git
-    targetRevision: main
-    path: .
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-cd
     helm:
       parameters:
         - name: server.extraArgs
