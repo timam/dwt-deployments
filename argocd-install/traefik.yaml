@@ -3,11 +3,8 @@ kind: Ingress
 metadata:
   name: argocd-server-ingress
   namespace: argocd
-  annotations:
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    kubernetes.io/ingress.class: "traefik"
 spec:
-  ingressClassName: "traefik"
+  ingressClassName: traefik
   rules:
     - host: deploywith.timam.dev
       http:
