@@ -42,7 +42,7 @@ configs:
       p, role:proj-tryonmagic-admin, projects, get, tryonmagic, allow
       
       # Bind GitHub user timam to tryonmagic project admin
-      g, timam, role:proj-tryonmagic-admin
+      g, mail@timam.dev, role:proj-tryonmagic-admin
       
       # Make tryonmagic org members admins (optional)
       g, tryonmagic:timam, role:admin
