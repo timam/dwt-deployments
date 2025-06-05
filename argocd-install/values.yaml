@@ -17,9 +17,6 @@ configs:
           redirectURI: https://hobbydeployer.timam.dev/api/dex/callback
           orgs:
           - name: tryonmagic
-          scopes:
-          - user:email
-          - read:user
 
   rbac:
     policy.default: role:readonly
