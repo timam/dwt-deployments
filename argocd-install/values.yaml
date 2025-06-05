@@ -1,6 +1,5 @@
 # argocd-install/values.yaml
-# ArgoCD configuration with GitHub OIDC authentication
-
+# ArgoCD configuration with GitHub OAuth authentication
 global:
   # Global configuration
   domain: hobbydeployer.timam.dev
@@ -8,15 +7,14 @@ global:
 configs:
   # ArgoCD Server configuration
   cm:
-    # GitHub OAuth configuration (not OIDC)
     dex.config: |
       connectors:
       - type: github
         id: github
         name: GitHub
         config:
-          clientID: $dex.github.clientId
-          clientSecret: $dex.github.clientSecret
+          clientID: Iv23lizfmHBuKOJubMiZ
+          clientSecret: 59ddfdfb672541c91193917c69229d7360019926
           orgs:
           - name: tryonmagic
             teams:
@@ -91,13 +89,6 @@ configs:
 
     # Scopes to examine for RBAC enforcement
     scopes: '[groups, email]'
-
-  # Secret for GitHub OAuth client credentials
-  secret:
-    # GitHub OAuth client credentials (will be created as a secret)
-    githubSecret: |
-      dex.github.clientId: Iv23lizfmHBuKOJubMiZ
-      dex.github.clientSecret: 59ddfdfb672541c91193917c69229d7360019926
 
 server:
   # Server configuration
