@@ -1,3 +1,88 @@
+# argocd-install/values.yaml
+# ArgoCD configuration with GitHub OIDC authentication
+
+global:
+  # Global configuration
+  domain: hobbydeployer.timam.dev
+
+configs:
+  # ArgoCD Server configuration
+  cm:
+    # OIDC configuration for GitHub
+    oidc.config: |
+      name: GitHub
+      issuer: https://github.com
+      clientId: $oidc.github.clientId
+      clientSecret: $oidc.github.clientSecret
+      requestedScopes: ["user:email", "read:user"]
+      requestedIDTokenClaims: {"groups": {"essential": true}}
+
+    # URL configuration
+    url: https://hobbydeployer.timam.dev
+
+    # Application instance label key
+    application.instanceLabelKey: argocd.argoproj.io/instance
+
+    # Default user policy - no permissions by default
+    policy.default: role:readonly
+
+    # RBAC policy configuration
+    policy.csv: |
+      # Default policy - no access by default
+      p, role:readonly, applications, get, */*, deny
+      p, role:readonly, clusters, get, *, deny
+      p, role:readonly, repositories, get, *, deny
+      
+      # here configure users 
+      g, timam, proj:tryonmagic:admin        # Admin role for project tryonmagic - GitHub user 'timam'
+  
+      # Project-specific policies are defined in the AppProject
+
+  # ArgoCD RBAC configuration
+  rbac:
+    # RBAC policy with GitHub integration
+    policy.csv: |
+      # Default deny policy
+      p, role:none, *, *, *, deny
+      
+      # GitHub user 'timam' gets admin access to tryonmagic project only
+      g, timam, proj:tryonmagic:admin
+      
+      # All other users have no access by default
+      p, role:readonly, applications, get, */*, deny
+      p, role:readonly, clusters, get, *, deny
+      p, role:readonly, repositories, get, *, deny
+
+    # Default role for authenticated users
+    policy.default: role:none
+
+    # Scopes to examine for RBAC enforcement
+    scopes: '[groups, email]'
+
+  # Secret for OIDC client credentials
+  secret:
+    # GitHub OIDC client credentials (will be created as a secret)
+    githubSecret: |
+      oidc.github.clientId: Iv23lizfmHBuKOJubMiZ
+      oidc.github.clientSecret: 59ddfdfb672541c91193917c69229d7360019926
+
 server:
+  # Server configuration
+  extraArgs:
+    - --insecure
+
+# Redis configuration
+redis:
+  enabled: true
+
+# Controller configuration
+controller:
   replicas: 1
-  url: https://hobbydeployer.timam.dev
+
+# Repo server configuration
+repoServer:
+  replicas: 1
+
+# Application set controller
+applicationSet:
+  enabled: true

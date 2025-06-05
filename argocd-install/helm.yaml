@@ -10,9 +10,6 @@ spec:
       chart: argo-cd
       targetRevision: 8.0.14
       helm:
-        parameters:
-          - name: server.extraArgs
-            value: '{--insecure}'
         valueFiles:
           - $values/argocd-install/values.yaml
     - repoURL: https://github.com/timam/dwt-deployments.git
