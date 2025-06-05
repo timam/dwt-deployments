@@ -12,9 +12,8 @@ configs:
         id: github
         name: GitHub
         config:
-          clientID: Iv23lizfmHBuKOJubMiZ
-          clientSecret: 59ddfdfb672541c91193917c69229d7360019926
-          redirectURI: https://hobbydeployer.timam.dev/api/dex/callback
+          clientID: Ov23lieB9Z48UStDROHy
+          clientSecret: 0210d8a29107e95c6bdd1e7e45f107b7fdfbcfe9
           orgs:
           - name: tryonmagic
 
