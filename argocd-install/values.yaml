@@ -8,14 +8,25 @@ global:
 configs:
   # ArgoCD Server configuration
   cm:
-    # OIDC configuration for GitHub
-    oidc.config: |
-      name: GitHub
-      issuer: https://github.com
-      clientId: $oidc.github.clientId
-      clientSecret: $oidc.github.clientSecret
-      requestedScopes: ["user:email", "read:user"]
-      requestedIDTokenClaims: {"groups": {"essential": true}}
+    # GitHub OAuth configuration (not OIDC)
+    dex.config: |
+      connectors:
+      - type: github
+        id: github
+        name: GitHub
+        config:
+          clientID: $dex.github.clientId
+          clientSecret: $dex.github.clientSecret
+          orgs:
+          - name: tryonmagic
+            teams:
+            - all
+          # Optional: Restrict to specific organizations
+          # orgs:
+          # - name: your-github-org
+          #   teams:
+          #   - developers
+          #   - admins
 
     # URL configuration
     url: https://hobbydeployer.timam.dev
@@ -23,53 +34,84 @@ configs:
     # Application instance label key
     application.instanceLabelKey: argocd.argoproj.io/instance
 
-    # Default user policy - no permissions by default
+    # Default user policy - no permissions by default for OAuth users
     policy.default: role:readonly
 
     # RBAC policy configuration
     policy.csv: |
-      # Default policy - no access by default
+      # ArgoCD admin user - full admin permissions
+      p, role:admin, applications, *, */*, allow
+      p, role:admin, clusters, *, *, allow
+      p, role:admin, repositories, *, *, allow
+      p, role:admin, certificates, *, *, allow
+      p, role:admin, accounts, *, *, allow
+      p, role:admin, gpgkeys, *, *, allow
+      p, role:admin, logs, *, *, allow
+      p, role:admin, exec, *, */*, allow
+      p, role:admin, projects, *, *, allow
+      
+      # Assign admin role to built-in admin user
+      g, admin, role:admin
+      
+      # Default policy - no access by default for OAuth users
       p, role:readonly, applications, get, */*, deny
       p, role:readonly, clusters, get, *, deny
       p, role:readonly, repositories, get, *, deny
       
-      # here configure users 
-      g, timam, proj:tryonmagic:admin        # Admin role for project tryonmagic - GitHub user 'timam'
-  
-      # Project-specific policies are defined in the AppProject
+      # GitHub user 'timam' gets admin access to tryonmagic project only
+      # The format is: g, <github-username>, <role>
+      g, timam, proj:tryonmagic:admin
 
   # ArgoCD RBAC configuration
   rbac:
-    # RBAC policy with GitHub integration
+    # RBAC policy with GitHub integration and admin permissions
     policy.csv: |
-      # Default deny policy
-      p, role:none, *, *, *, deny
+      # Built-in admin user - full system admin permissions
+      p, role:admin, applications, *, */*, allow
+      p, role:admin, clusters, *, *, allow
+      p, role:admin, repositories, *, *, allow
+      p, role:admin, certificates, *, *, allow
+      p, role:admin, accounts, *, *, allow
+      p, role:admin, gpgkeys, *, *, allow
+      p, role:admin, logs, *, *, allow
+      p, role:admin, exec, *, */*, allow
+      p, role:admin, projects, *, *, allow
+      
+      # Assign admin role to built-in admin user
+      g, admin, role:admin
       
       # GitHub user 'timam' gets admin access to tryonmagic project only
       g, timam, proj:tryonmagic:admin
       
-      # All other users have no access by default
-      p, role:readonly, applications, get, */*, deny
-      p, role:readonly, clusters, get, *, deny
-      p, role:readonly, repositories, get, *, deny
+      # Default deny policy for OAuth users (not admin)
+      p, role:none, *, *, *, deny
 
-    # Default role for authenticated users
+    # Default role for OAuth authenticated users (GitHub users)
     policy.default: role:none
 
     # Scopes to examine for RBAC enforcement
     scopes: '[groups, email]'
 
-  # Secret for OIDC client credentials
+  # Secret for GitHub OAuth client credentials
   secret:
-    # GitHub OIDC client credentials (will be created as a secret)
+    # GitHub OAuth client credentials (will be created as a secret)
     githubSecret: |
-      oidc.github.clientId: Iv23lizfmHBuKOJubMiZ
-      oidc.github.clientSecret: 59ddfdfb672541c91193917c69229d7360019926
+      dex.github.clientId: YOUR_GITHUB_OAUTH_APP_CLIENT_ID
+      dex.github.clientSecret: YOUR_GITHUB_OAUTH_APP_CLIENT_SECRET
 
 server:
   # Server configuration
   extraArgs:
-    - --insecure
+    - --insecure  # Only for development, remove for production
+
+  # Ingress configuration (optional)
+  ingress:
+    enabled: true
+    ingressClassName: traefik  # or your ingress class
+    hostname: argocd.yourdomain.com  # Replace with your domain
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"  # if using cert-manager
+    tls: true
 
 # Redis configuration
 redis:
