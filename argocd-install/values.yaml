@@ -18,7 +18,6 @@ configs:
           - name: tryonmagic
 
   rbac:
-    policy.default: role:readonly
     policy.csv: |
       # Admin permissions for all ArgoCD resources
       p, role:admin, applications, *, */*, allow
