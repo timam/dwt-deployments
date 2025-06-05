@@ -106,12 +106,12 @@ server:
 
   # Ingress configuration (optional)
   ingress:
-    enabled: true
-    ingressClassName: traefik  # or your ingress class
-    hostname: argocd.yourdomain.com  # Replace with your domain
-    annotations:
-      cert-manager.io/cluster-issuer: "letsencrypt-prod"  # if using cert-manager
-    tls: true
+    enabled: false
+#    ingressClassName: traefik  # or your ingress class
+#    hostname: hobbydeployer.timam.dev  # Replace with your domain
+#    annotations:
+#      cert-manager.io/cluster-issuer: "letsencrypt-prod"  # if using cert-manager
+#    tls: true
 
 # Redis configuration
 redis:
