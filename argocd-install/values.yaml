@@ -36,7 +36,7 @@ configs:
       
       # Project-specific admin role for tryonmagic
       p, role:proj-tryonmagic-admin, applications, *, tryonmagic/*, allow
-      p, role:proj-tryonmagic-admin, repositories, *, tryonmagic/*, allow
+      p, role:proj-tryonmagic-admin, repositories, create, tryonmagic, allow
       p, role:proj-tryonmagic-admin, repositories, create, tryonmagic/*, allow
       p, role:proj-tryonmagic-admin, logs, *, tryonmagic/*, allow
       p, role:proj-tryonmagic-admin, exec, *, tryonmagic/*, allow
