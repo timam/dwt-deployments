@@ -1,4 +1,3 @@
-# argocd-install/values.yaml
 # ArgoCD configuration with GitHub OAuth authentication
 global:
   # Global configuration
@@ -7,6 +6,13 @@ global:
 configs:
   # ArgoCD Server configuration
   cm:
+    # URL configuration
+    url: https://hobbydeployer.timam.dev
+
+    # Application instance label key
+    application.instanceLabelKey: argocd.argoproj.io/instance
+
+    # Dex configuration for GitHub OAuth
     dex.config: |
       connectors:
       - type: github
@@ -15,29 +21,18 @@ configs:
         config:
           clientID: Iv23lizfmHBuKOJubMiZ
           clientSecret: 59ddfdfb672541c91193917c69229d7360019926
-          orgs:
-          - name: tryonmagic
-            teams:
-            - all
-          # Optional: Restrict to specific organizations
-          # orgs:
-          # - name: your-github-org
-          #   teams:
-          #   - developers
-          #   - admins
+          scopes:
+            - user:email
+            - read:org
 
-    # URL configuration
-    url: https://hobbydeployer.timam.dev
-
-    # Application instance label key
-    application.instanceLabelKey: argocd.argoproj.io/instance
-
-    # Default user policy - no permissions by default for OAuth users
+  # RBAC configuration - moved to separate section and simplified
+  rbac:
+    # Default role for authenticated users
     policy.default: role:readonly
 
-    # RBAC policy configuration
+    # RBAC policies
     policy.csv: |
-      # ArgoCD admin user - full admin permissions
+      # Built-in admin user - full permissions
       p, role:admin, applications, *, */*, allow
       p, role:admin, clusters, *, *, allow
       p, role:admin, repositories, *, *, allow
@@ -48,61 +43,32 @@ configs:
       p, role:admin, exec, *, */*, allow
       p, role:admin, projects, *, *, allow
       
-      # Assign admin role to built-in admin user
-      g, admin, role:admin
-      
-      # Default policy - no access by default for OAuth users
+      # Readonly role for default users
       p, role:readonly, applications, get, */*, deny
       p, role:readonly, clusters, get, *, deny
       p, role:readonly, repositories, get, *, deny
       
-      # GitHub user 'timam' gets admin access to tryonmagic project only
-      # The format is: g, <github-username>, <role>
-      g, timam, proj:tryonmagic:admin
-
-  # ArgoCD RBAC configuration
-  rbac:
-    # RBAC policy with GitHub integration and admin permissions
-    policy.csv: |
-      # Built-in admin user - full system admin permissions
-      p, role:admin, applications, *, */*, allow
-      p, role:admin, clusters, *, *, allow
-      p, role:admin, repositories, *, *, allow
-      p, role:admin, certificates, *, *, allow
-      p, role:admin, accounts, *, *, allow
-      p, role:admin, gpgkeys, *, *, allow
-      p, role:admin, logs, *, *, allow
-      p, role:admin, exec, *, */*, allow
-      p, role:admin, projects, *, *, allow
+      # Project-specific admin role for tryonmagic
+      p, proj:tryonmagic:admin, applications, *, tryonmagic/*, allow
+      p, proj:tryonmagic:admin, repositories, *, *, allow
+      p, proj:tryonmagic:admin, logs, get, tryonmagic/*, allow
+      p, proj:tryonmagic:admin, exec, create, tryonmagic/*, allow
       
-      # Assign admin role to built-in admin user
+      # Role bindings
       g, admin, role:admin
-      
-      # GitHub user 'timam' gets admin access to tryonmagic project only
       g, timam, proj:tryonmagic:admin
-      
-      # Default deny policy for OAuth users (not admin)
-      p, role:none, *, *, *, deny
 
-    # Default role for OAuth authenticated users (GitHub users)
-    policy.default: role:none
-
-    # Scopes to examine for RBAC enforcement
+    # Scopes for RBAC
     scopes: '[groups, email]'
 
 server:
   # Server configuration
   extraArgs:
-    - --insecure  # Only for development, remove for production
+    - --insecure  # Remove for production with proper TLS
 
-  # Ingress configuration (optional)
+  # Ingress configuration
   ingress:
     enabled: false
-#    ingressClassName: traefik  # or your ingress class
-#    hostname: hobbydeployer.timam.dev  # Replace with your domain
-#    annotations:
-#      cert-manager.io/cluster-issuer: "letsencrypt-prod"  # if using cert-manager
-#    tls: true
 
 # Redis configuration
 redis:
