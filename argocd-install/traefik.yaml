@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: deploywith.timam.dev
+    - host: hobbydeployer.timam.dev
       http:
         paths:
           - path: /
