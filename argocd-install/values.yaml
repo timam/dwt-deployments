@@ -1,18 +1,12 @@
 # ArgoCD configuration with GitHub OAuth authentication
 global:
-  # Global configuration
   domain: hobbydeployer.timam.dev
 
 configs:
-  # ArgoCD Server configuration
   cm:
-    # URL configuration
     url: https://hobbydeployer.timam.dev
-
-    # Application instance label key
     application.instanceLabelKey: argocd.argoproj.io/instance
-
-    # Dex configuration for GitHub OAuth
+    admin.enabled: true
     dex.config: |
       connectors:
       - type: github
@@ -21,18 +15,17 @@ configs:
         config:
           clientID: Iv23lizfmHBuKOJubMiZ
           clientSecret: 59ddfdfb672541c91193917c69229d7360019926
+          redirectURI: https://hobbydeployer.timam.dev/api/dex/callback
           scopes:
             - user:email
             - read:org
+            - read:user
 
-  # RBAC configuration - moved to separate section and simplified
   rbac:
-    # Default role for authenticated users
+    # Default minimal access for authenticated users
     policy.default: role:readonly
-
-    # RBAC policies
     policy.csv: |
-      # Built-in admin user - full permissions
+      # Built-in admin user - full ArgoCD permissions
       p, role:admin, applications, *, */*, allow
       p, role:admin, clusters, *, *, allow
       p, role:admin, repositories, *, *, allow
@@ -43,45 +36,32 @@ configs:
       p, role:admin, exec, *, */*, allow
       p, role:admin, projects, *, *, allow
       
-      # Readonly role for default users
-      p, role:readonly, applications, get, */*, deny
-      p, role:readonly, clusters, get, *, deny
-      p, role:readonly, repositories, get, *, deny
+      # Readonly role - minimal permissions for default users
+      p, role:readonly, applications, get, */*, allow
+      p, role:readonly, clusters, get, *, allow
+      p, role:readonly, repositories, get, *, allow
+      p, role:readonly, logs, get, */*, allow
       
-      # Project-specific admin role for tryonmagic
-      p, proj:tryonmagic:admin, applications, *, tryonmagic/*, allow
-      p, proj:tryonmagic:admin, repositories, *, *, allow
-      p, proj:tryonmagic:admin, logs, get, tryonmagic/*, allow
-      p, proj:tryonmagic:admin, exec, create, tryonmagic/*, allow
-      
-      # Role bindings
-      g, admin, role:admin
+      # User-to-project role bindings
+      # Map GitHub users to their project admin roles
       g, timam, proj:tryonmagic:admin
+      
+      # Add more users as needed:
+      # g, <github-username>, proj:<project-name>:admin
 
-    # Scopes for RBAC
     scopes: '[groups, email]'
 
 server:
-  # Server configuration
   extraArgs:
     - --insecure  # Remove for production with proper TLS
-
-  # Ingress configuration
   ingress:
     enabled: false
 
-# Redis configuration
 redis:
   enabled: true
-
-# Controller configuration
 controller:
   replicas: 1
-
-# Repo server configuration
 repoServer:
   replicas: 1
-
-# Application set controller
 applicationSet:
   enabled: true
