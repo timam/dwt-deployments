@@ -14,8 +14,12 @@ configs:
         config:
           clientID: Iv23lizfmHBuKOJubMiZ
           clientSecret: 59ddfdfb672541c91193917c69229d7360019926
+          redirectURI: https://hobbydeployer.timam.dev/api/dex/callback
           orgs:
           - name: tryonmagic
+          scopes:
+          - user:email
+          - read:user
 
   rbac:
     policy.default: role:readonly
