@@ -10,6 +10,9 @@ spec:
     chart: argo-cd
     targetRevision: 8.0.14
     helm:
+      parameters:
+        - name: server.extraArgs
+          value: '{--insecure}'
       valueFiles:
         - values.yaml
   destination:
