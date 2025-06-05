@@ -1,11 +1,10 @@
-# ArgoCD configuration with GitHub OAuth authentication
+# Simplified ArgoCD configuration with GitHub OAuth
 global:
   domain: hobbydeployer.timam.dev
 
 configs:
   cm:
     url: https://hobbydeployer.timam.dev
-    application.instanceLabelKey: argocd.argoproj.io/instance
     admin.enabled: true
     dex.config: |
       connectors:
@@ -15,17 +14,13 @@ configs:
         config:
           clientID: Iv23lizfmHBuKOJubMiZ
           clientSecret: 59ddfdfb672541c91193917c69229d7360019926
-          redirectURI: https://hobbydeployer.timam.dev/api/dex/callback
-          scopes:
-            - user:email
-            - read:org
-            - read:user
+          orgs:
+          - name: tryonmagic
 
   rbac:
-    # Default minimal access for authenticated users
     policy.default: role:readonly
     policy.csv: |
-      # Built-in admin user - full ArgoCD permissions
+      # Admin permissions for all ArgoCD resources
       p, role:admin, applications, *, */*, allow
       p, role:admin, clusters, *, *, allow
       p, role:admin, repositories, *, *, allow
@@ -36,32 +31,36 @@ configs:
       p, role:admin, exec, *, */*, allow
       p, role:admin, projects, *, *, allow
       
-      # Readonly role - minimal permissions for default users
+      # Readonly permissions for default users
       p, role:readonly, applications, get, */*, allow
-      p, role:readonly, clusters, get, *, allow
-      p, role:readonly, repositories, get, *, allow
       p, role:readonly, logs, get, */*, allow
       
-      # User-to-project role bindings
-      # Map GitHub users to their project admin roles
-      g, timam, proj:tryonmagic:admin
+      # Project-specific admin role for tryonmagic
+      p, role:proj-tryonmagic-admin, applications, *, tryonmagic/*, allow
+      p, role:proj-tryonmagic-admin, repositories, *, *, allow
+      p, role:proj-tryonmagic-admin, logs, *, tryonmagic/*, allow
+      p, role:proj-tryonmagic-admin, exec, *, tryonmagic/*, allow
       
-      # Add more users as needed:
-      # g, <github-username>, proj:<project-name>:admin
-
-    scopes: '[groups, email]'
+      # Bind GitHub user timam to tryonmagic project admin
+      g, timam, role:proj-tryonmagic-admin
+      
+      # Make tryonmagic org members admins (optional)
+      g, tryonmagic:timam, role:admin
 
 server:
   extraArgs:
-    - --insecure  # Remove for production with proper TLS
+    - --insecure
   ingress:
     enabled: false
 
 redis:
   enabled: true
+
 controller:
   replicas: 1
+
 repoServer:
   replicas: 1
+
 applicationSet:
   enabled: true
