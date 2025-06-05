@@ -96,8 +96,8 @@ configs:
   secret:
     # GitHub OAuth client credentials (will be created as a secret)
     githubSecret: |
-      dex.github.clientId: YOUR_GITHUB_OAUTH_APP_CLIENT_ID
-      dex.github.clientSecret: YOUR_GITHUB_OAUTH_APP_CLIENT_SECRET
+      dex.github.clientId: Iv23lizfmHBuKOJubMiZ
+      dex.github.clientSecret: 59ddfdfb672541c91193917c69229d7360019926
 
 server:
   # Server configuration
