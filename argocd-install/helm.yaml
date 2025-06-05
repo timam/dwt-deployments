@@ -5,16 +5,19 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://argoproj.github.io/argo-helm
-    chart: argo-cd
-    targetRevision: 8.0.14
-    helm:
-      parameters:
-        - name: server.extraArgs
-          value: '{--insecure}'
-      valueFiles:
-        - values.yaml
+  sources:
+    - repoURL: https://argoproj.github.io/argo-helm
+      chart: argo-cd
+      targetRevision: 8.0.14
+      helm:
+        parameters:
+          - name: server.extraArgs
+            value: '{--insecure}'
+        valueFiles:
+          - $values/argocd-install/values.yaml
+    - repoURL: https://github.com/timam/dwt-deployments.git
+      targetRevision: HEAD
+      ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -22,3 +25,5 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
