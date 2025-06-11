@@ -12,7 +12,8 @@ spec:
     - 'https://github.com/tryonmagic/**'
 
   destinations:
-    - namespace: '*'
+    - name: '*'
+      namespace: '*'
       server: https://kubernetes.default.svc
   clusterResourceWhitelist:
     - group: '*'
@@ -25,9 +26,6 @@ spec:
         - p, proj:tryonmagic:admin, applications, get, tryonmagic/*, allow
         - p, proj:tryonmagic:admin, applications, sync, tryonmagic/*, allow
         - p, proj:tryonmagic:admin, applications, update, tryonmagic/*, allow
-      users:
-        - mail@timam.dev
-        - timam
 
   orphanedResources:
     warn: true
