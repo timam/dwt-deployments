@@ -19,6 +19,7 @@ configs:
     policy.csv: |
       g, admin, role:admin
       g, mail@timam.dev, proj:tryonmagic:admin
+      g, faisal.ahmedbcse@gmail.com, proj:tryonmagic:admin
     scopes: "[email, group]"
 
 server:
