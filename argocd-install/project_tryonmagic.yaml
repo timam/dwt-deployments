@@ -23,6 +23,4 @@ spec:
   - name: admin
     description: "Full admin access to tryonmagic project ONLY"
     policies:
-      - p, proj:tryonmagic:admin, applications, get, tryonmagic/*, allow
-      - p, proj:tryonmagic:admin, applications, sync, tryonmagic/*, allow
-      - p, proj:tryonmagic:admin, applications, update, tryonmagic/*, allow
+      - p, proj:tryonmagic:admin, applications, *, */*, allow
