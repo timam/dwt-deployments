@@ -21,6 +21,7 @@ configs:
     policy.csv: |
       g, admin, role:admin
       g, mail@timam.dev, proj:tryonmagic:admin
+      g, timam, proj:tryonmagic:admin
 
 server:
   extraArgs:
