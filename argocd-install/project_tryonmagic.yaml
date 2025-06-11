@@ -26,6 +26,7 @@ spec:
         - p, proj:tryonmagic:admin, projects, get, tryonmagic/*, allow
       groups:
         - mail@timam.dev
+        - timam
 
   orphanedResources:
     warn: true
