@@ -21,7 +21,7 @@ configs:
     policy.csv: |
       g, admin, role:admin
       g, mail@timam.dev, proj:tryonmagic:admin
-      g, 47936356, proj:tryonmagic:admin
+    scopes: "[email, group]"
 
 server:
   extraArgs:
