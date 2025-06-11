@@ -9,115 +9,24 @@ spec:
   description: "Project for tryonmagic applications with GitHub OIDC authentication"
 
   sourceRepos:
-    - 'https://github.com/tryonmagic/*'  # All tryonmagic repositories
-    - 'https://charts.bitnami.com/bitnami'
-    # Add more specific repos as needed
+    - 'https://github.com/tryonmagic/**'
 
   # Define which Kubernetes clusters this project can deploy to
   destinations:
-    - namespace: '*'
+    - namespace: '!kube-system'
       server: https://kubernetes.default.svc  # Local cluster
 
-  # Define which Kubernetes resources this project can manage
-  clusterResourceWhitelist:
-    - group: ''
-      kind: Namespace
-    - group: 'rbac.authorization.k8s.io'
-      kind: ClusterRole
-    - group: 'rbac.authorization.k8s.io'
-      kind: ClusterRoleBinding
-    - group: 'apiextensions.k8s.io'
-      kind: CustomResourceDefinition
-    - group: 'networking.k8s.io'
-      kind: IngressClass
-
-  # Define which namespaced resources this project can manage
-  namespaceResourceWhitelist:
-    - group: ''
-      kind: '*'  # Allow all core resources (pods, services, configmaps, etc.)
-    - group: 'apps'
-      kind: '*'  # Allow all apps resources (deployments, statefulsets, etc.)
-    - group: 'networking.k8s.io'
-      kind: '*'  # Allow ingress, network policies, etc.
-    - group: 'cert-manager.io'
-      kind: '*'  # If using cert-manager
-    - group: 'traefik.containo.us'
-      kind: '*'  # If using Traefik CRDs
-    - group: 'batch'
-      kind: '*'  # Jobs, CronJobs
-    - group: 'autoscaling'
-      kind: '*'  # HPA, VPA
+  # TODO: implement clusterResourceWhitelist namespaceResourceWhitelist
 
   # Project roles - These roles are LIMITED TO THIS PROJECT ONLY
-  # These work with GitHub OIDC authentication
   roles:
     # Project Admin - full access to tryonmagic project ONLY
-    # GitHub user 'timam' will be assigned to this role via global RBAC policy
     - name: admin
       description: "Full admin access to tryonmagic project ONLY"
       policies:
-        # Application management
-        - p, proj:tryonmagic:admin, applications, *, tryonmagic/*, allow
-        - p, proj:tryonmagic:admin, applications, create, tryonmagic/*, allow
-        - p, proj:tryonmagic:admin, applications, delete, tryonmagic/*, allow
-        - p, proj:tryonmagic:admin, applications, sync, tryonmagic/*, allow
-        - p, proj:tryonmagic:admin, applications, override, tryonmagic/*, allow
+        - p, proj:tryonmagic:admin, applications, *, *, allow
+      groups:
+        - user@example.org
 
-        # Repository management
-        - p, proj:tryonmagic:admin, repositories, *, *, allow
-
-        # Certificate management
-        - p, proj:tryonmagic:admin, certificates, *, *, allow
-
-        # Cluster access (read-only for security)
-        - p, proj:tryonmagic:admin, clusters, get, *, allow
-
-        # Exec into pods (be careful with this permission)
-        - p, proj:tryonmagic:admin, exec, create, tryonmagic/*, allow
-
-        # Logs access
-        - p, proj:tryonmagic:admin, logs, get, tryonmagic/*, allow
-
-    # Project Developer - can deploy and manage applications in tryonmagic project ONLY
-    - name: developer
-      description: "Developer access - can manage applications in tryonmagic project ONLY"
-      policies:
-        # Application management (no delete)
-        - p, proj:tryonmagic:developer, applications, get, tryonmagic/*, allow
-        - p, proj:tryonmagic:developer, applications, create, tryonmagic/*, allow
-        - p, proj:tryonmagic:developer, applications, sync, tryonmagic/*, allow
-        - p, proj:tryonmagic:developer, applications, update, tryonmagic/*, allow
-
-        # Repository access (read-only)
-        - p, proj:tryonmagic:developer, repositories, get, *, allow
-
-        # Cluster access (read-only)
-        - p, proj:tryonmagic:developer, clusters, get, *, allow
-
-        # Logs access
-        - p, proj:tryonmagic:developer, logs, get, tryonmagic/*, allow
-
-    # Project Viewer - read-only access to tryonmagic project ONLY
-    - name: viewer
-      description: "Read-only access to tryonmagic project ONLY"
-      policies:
-        - p, proj:tryonmagic:viewer, applications, get, tryonmagic/*, allow
-        - p, proj:tryonmagic:viewer, repositories, get, *, allow
-        - p, proj:tryonmagic:viewer, clusters, get, *, allow
-        - p, proj:tryonmagic:viewer, logs, get, tryonmagic/*, allow
-
-  # Sync windows - restrict when syncs can happen if needed
-  syncWindows:
-    - kind: allow
-      schedule: '* * * * *'  # Always allow for now
-      duration: 24h
-      applications:
-        - '*'
-
-  # Optional: Signature keys for signed commits (if using signed commits)
-  # signatureKeys:
-  #   - keyID: ABCDEF1234567890
-
-  # Optional: Orphaned resources monitoring
   orphanedResources:
     warn: true
