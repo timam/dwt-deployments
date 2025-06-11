@@ -22,7 +22,7 @@ spec:
     - name: admin
       description: "Full admin access to tryonmagic project ONLY"
       policies:
-        - p, proj:tryonmagic:admin, applications, *, tryonmagic/*, allow
+        - p, proj:tryonmagic:admin, applications, *, *, allow
         - p, proj:tryonmagic:admin, projects, get, tryonmagic, allow
       groups:
         - mail@timam.dev
