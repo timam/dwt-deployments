@@ -25,6 +25,7 @@ configs:
       p, role:authenticated, repositories, get, *, deny
       p, role:authenticated, clusters, get, *, deny
       
+      g, admin, role:admin
       g, timam, proj:tryonmagic:admin
       
       policy.default: role:authenticated
