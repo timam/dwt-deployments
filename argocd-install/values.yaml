@@ -19,16 +19,10 @@ configs:
 
   rbac:
     policy.csv: |
-      # Minimal authenticated role with no permissions
-      p, role:authenticated, applications, get, */*, deny
-      p, role:authenticated, projects, get, *, deny
-      p, role:authenticated, repositories, get, *, deny
-      p, role:authenticated, clusters, get, *, deny
-      
       g, admin, role:admin
-      g, timam, proj:tryonmagic:admin
+      g, mail@timam.dev, proj:tryonmagic:admin
       
-      policy.default: role:authenticated
+      policy.default: ""
 
 server:
   extraArgs:

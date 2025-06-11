@@ -22,7 +22,7 @@ spec:
         - p, proj:tryonmagic:admin, applications, *, tryonmagic/*, allow
         - p, proj:tryonmagic:admin, projects, get, tryonmagic, allow
       groups:
-        - timam
+        - mail@timam.dev
 
   orphanedResources:
     warn: true
