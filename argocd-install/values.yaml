@@ -14,8 +14,6 @@ configs:
         config:
           clientID: Ov23lieB9Z48UStDROHy
           clientSecret: 0210d8a29107e95c6bdd1e7e45f107b7fdfbcfe9
-          orgs:
-          - name: tryonmagic
 
   rbac:
     policy.csv: |
