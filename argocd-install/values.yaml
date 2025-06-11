@@ -19,33 +19,15 @@ configs:
 
   rbac:
     policy.csv: |
-      # Admin permissions for all ArgoCD resources
-      p, role:admin, applications, *, */*, allow
-      p, role:admin, clusters, *, *, allow
-      p, role:admin, repositories, *, *, allow
-      p, role:admin, certificates, *, *, allow
-      p, role:admin, accounts, *, *, allow
-      p, role:admin, gpgkeys, *, *, allow
-      p, role:admin, logs, *, *, allow
-      p, role:admin, exec, *, */*, allow
-      p, role:admin, projects, *, *, allow
+      # Minimal authenticated role with no permissions
+      p, role:authenticated, applications, get, */*, deny
+      p, role:authenticated, projects, get, *, deny
+      p, role:authenticated, repositories, get, *, deny
+      p, role:authenticated, clusters, get, *, deny
       
-      # Readonly permissions for default users
-      p, role:readonly, applications, get, */*, allow
-      p, role:readonly, logs, get, */*, allow
+      g, timam, proj:tryonmagic:admin
       
-      # Project-specific admin role for tryonmagic
-      p, role:proj-tryonmagic-admin, applications, *, tryonmagic/*, allow
-      p, role:proj-tryonmagic-admin, repositories, create, *, allow
-      p, role:proj-tryonmagic-admin, logs, *, tryonmagic/*, allow
-      p, role:proj-tryonmagic-admin, exec, *, tryonmagic/*, allow
-      p, role:proj-tryonmagic-admin, projects, get, tryonmagic, allow
-      
-      # Bind GitHub user timam to tryonmagic project admin
-      g, mail@timam.dev, role:proj-tryonmagic-admin
-      
-      # Make tryonmagic org members admins (optional)
-      g, tryonmagic:timam, role:admin
+      policy.default: role:authenticated
 
 server:
   extraArgs:

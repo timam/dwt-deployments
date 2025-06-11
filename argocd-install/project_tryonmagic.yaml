@@ -6,27 +6,23 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  description: "Project for tryonmagic applications with GitHub OIDC authentication"
+  description: "Project for tryonmagic applications"
 
   sourceRepos:
     - 'https://github.com/tryonmagic/**'
 
-  # Define which Kubernetes clusters this project can deploy to
   destinations:
-    - namespace: '!kube-system'
-      server: https://kubernetes.default.svc  # Local cluster
+    - namespace: '*'
+      server: https://kubernetes.default.svc
 
-  # TODO: implement clusterResourceWhitelist namespaceResourceWhitelist
-
-  # Project roles - These roles are LIMITED TO THIS PROJECT ONLY
   roles:
-    # Project Admin - full access to tryonmagic project ONLY
     - name: admin
       description: "Full admin access to tryonmagic project ONLY"
       policies:
-        - p, proj:tryonmagic:admin, applications, *, *, allow
+        - p, proj:tryonmagic:admin, applications, *, tryonmagic/*, allow
+        - p, proj:tryonmagic:admin, projects, get, tryonmagic, allow
       groups:
-        - user@example.org
+        - timam
 
   orphanedResources:
     warn: true
