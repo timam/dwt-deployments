@@ -14,7 +14,8 @@ spec:
   destinations:
   - name: '*'
     namespace: '*'
-    server: https://kubernetes.default.svc
+    server: https://k8s.tryonmagic.com:6443
+
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
