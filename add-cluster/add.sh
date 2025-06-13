@@ -90,4 +90,5 @@ stringData:
     }
 EOF
 
+kubectl create ns prod
 echo "Copy the cluster.yaml file to your ArgoCD server and apply it"
