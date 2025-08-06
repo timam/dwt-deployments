@@ -12,6 +12,7 @@ spec:
   - 'https://github.com/tryonmagic/**'
   - 'https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts'
   - 'https://aws.github.io/secrets-store-csi-driver-provider-aws'
+  - 'https://github.com/kubernetes-sigs/secrets-store-csi-driver'
 
   destinations:
   - name: '*'
